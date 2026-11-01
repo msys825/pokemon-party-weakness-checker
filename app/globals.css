@@ -68,30 +68,115 @@ html.dark body {
   align-items: center;
 }
 
+.title-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  /* 右上のテーマボタンと重ならないよう左右に余白を確保 */
+  padding: 0 2.75rem;
+  text-align: center;
+}
+
 .title {
-  font-size: 1.125rem;
-  font-weight: 600;
+  margin: 0;
+  font-family: var(--font-rounded), -apple-system, BlinkMacSystemFont, 'Hiragino Maru Gothic ProN', 'Hiragino Sans', sans-serif;
+  font-weight: 800;
   color: #1a1a1a;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
   text-align: center;
 }
 
 html.dark .title {
-  color: #e0e0e0;
+  color: #f0f0f0;
+}
+
+.title-kicker {
+  display: block;
+  margin-bottom: 0.125rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #1a73e8;
+}
+
+html.dark .title-kicker {
+  color: #8ab4f8;
+}
+
+.title-main {
+  display: block;
+  font-size: 1.5rem;
+}
+
+.tagline {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #666;
+  line-height: 1.5;
+}
+
+html.dark .tagline {
+  color: #a8a8a8;
+}
+
+/* 狭い画面では「色でわかる、」の後ろで改行する */
+.tagline-phrase {
+  display: inline-block;
+}
+
+.tagline-weak,
+.tagline-resist {
+  font-weight: 700;
+}
+
+.tagline-weak {
+  color: #d32f2f;
+}
+
+.tagline-resist {
+  color: #1a73e8;
+}
+
+html.dark .tagline-weak {
+  color: #ff8a80;
+}
+
+html.dark .tagline-resist {
+  color: #8ab4f8;
 }
 
 @media (min-width: 768px) {
-  .title {
-    font-size: 1.25rem;
-    letter-spacing: -0.025em;
+  .title-kicker {
+    font-size: 0.9375rem;
+  }
+
+  .title-main {
+    font-size: 1.75rem;
+  }
+
+  .tagline {
+    font-size: 0.9375rem;
   }
 }
 
 @media (min-width: 1024px) {
-  .title {
-    font-size: 1.625rem;
-    letter-spacing: -0.03em;
+  .title-block {
+    gap: 0.5rem;
+  }
+
+  .title-kicker {
+    font-size: 1rem;
+  }
+
+  .title-main {
+    font-size: 2rem;
+  }
+
+  .tagline {
+    font-size: 1rem;
   }
 }
 
@@ -363,15 +448,6 @@ html.dark .section-title {
   .search-member-button {
     font-size: 1rem;
   }
-
-  .explanation-toggle {
-    font-size: 1rem;
-  }
-
-  .explanation-text {
-    font-size: 1rem;
-    line-height: 1.8;
-  }
 }
 
 .pokemon-member:last-of-type {
@@ -427,134 +503,109 @@ html.dark .pokemon-type-select:disabled {
   color: #666;
 }
 
-.remove-button {
-  padding: 0.5rem 0.625rem;
-  background-color: transparent;
-  color: #d32f2f;
-  border: 1px solid #ffcdd2;
-  border-radius: 3px;
-  font-size: 0.8125rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.remove-button:hover {
-  background-color: #ffebee;
-  border-color: #ef9a9a;
-}
-
-.remove-button:active {
-  background-color: #ffcdd2;
-}
-
-.remove-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.remove-button:disabled:hover {
-  background-color: transparent;
-  border-color: #fecaca;
-}
-
-.suggest-member-button {
-  padding: 0.5rem 0.625rem;
-  background-color: transparent;
-  color: #3ea8ff;
-  border: 1px solid #90caf9;
-  border-radius: 3px;
-  font-size: 0.8125rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.suggest-member-button:hover {
-  background-color: #e3f2fd;
-  border-color: #64b5f6;
-}
-
-.suggest-member-button:active {
-  background-color: #bbdefb;
-}
-
-html.dark .suggest-member-button {
-  color: #64b5f6;
-  border-color: #42a5f5;
-}
-
-html.dark .suggest-member-button:hover {
-  background-color: rgba(33, 150, 243, 0.1);
-  border-color: #1e88e5;
-}
-
-html.dark .suggest-member-button:active {
-  background-color: rgba(33, 150, 243, 0.2);
-}
-
+/* メンバー行のアクションボタン（塗り + 白文字）
+ * 白文字とのコントラスト比はすべて WCAG AA（4.5:1）以上 */
+.remove-button,
+.suggest-member-button,
 .search-member-button {
   padding: 0.5rem 0.625rem;
-  background-color: transparent;
-  color: #757575;
-  border: 1px solid #bdbdbd;
-  border-radius: 3px;
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 6px;
   font-size: 0.8125rem;
-  font-weight: 400;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
   white-space: nowrap;
   flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
-.search-member-button:hover {
-  background-color: #f5f5f5;
-  border-color: #9e9e9e;
-  color: #616161;
+.remove-button:focus-visible,
+.suggest-member-button:focus-visible,
+.search-member-button:focus-visible {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
 }
 
-.search-member-button:active {
-  background-color: #e0e0e0;
+html.dark .remove-button:focus-visible,
+html.dark .suggest-member-button:focus-visible,
+html.dark .search-member-button:focus-visible {
+  outline-color: #8ab4f8;
 }
 
-.search-member-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.remove-button:active:not(:disabled),
+.suggest-member-button:active:not(:disabled),
+.search-member-button:active:not(:disabled) {
+  box-shadow: none;
 }
 
-.search-member-button:disabled:hover {
-  background-color: transparent;
-  border-color: #bdbdbd;
-  color: #757575;
+/* 削除: 危険操作 */
+.remove-button {
+  background-color: #d04343;
+}
+
+.remove-button:hover:not(:disabled) {
+  background-color: #c83232;
+}
+
+.remove-button:active:not(:disabled) {
+  background-color: #b32d2d;
+}
+
+/* 提案: 主要操作 */
+.suggest-member-button {
+  background-color: #3075ce;
+}
+
+.suggest-member-button:hover:not(:disabled) {
+  background-color: #2c69b9;
+}
+
+.suggest-member-button:active:not(:disabled) {
+  background-color: #275da5;
+}
+
+/* 検索: 補助操作 */
+.search-member-button {
+  background-color: #616161;
+}
+
+.search-member-button:hover:not(:disabled) {
+  background-color: #525252;
+}
+
+.search-member-button:active:not(:disabled) {
+  background-color: #424242;
 }
 
 html.dark .search-member-button {
-  color: #9e9e9e;
-  border-color: #555;
+  background-color: #5c5c5c;
 }
 
-html.dark .search-member-button:hover {
-  background-color: rgba(158, 158, 158, 0.1);
-  border-color: #666;
-  color: #b0b0b0;
+html.dark .search-member-button:hover:not(:disabled) {
+  background-color: #4a4a4a;
 }
 
-html.dark .search-member-button:active {
-  background-color: rgba(158, 158, 158, 0.2);
+html.dark .search-member-button:active:not(:disabled) {
+  background-color: #424242;
 }
 
+/* 無効状態: 塗りを弱めて操作できないことを示す */
+.remove-button:disabled,
+.search-member-button:disabled {
+  background-color: #d6d6d6;
+  color: #ffffff;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+html.dark .remove-button:disabled,
 html.dark .search-member-button:disabled {
-  opacity: 0.5;
-}
-
-html.dark .search-member-button:disabled:hover {
-  background-color: transparent;
-  border-color: #555;
-  color: #9e9e9e;
+  background-color: #3a3a3a;
+  color: #8a8a8a;
 }
 
 @media (min-width: 768px) {
@@ -803,79 +854,321 @@ html.dark .weakness-table-title {
   }
 }
 
+/* 表の見かた（常時表示） */
 .explanation-section {
-  margin-top: 1.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid #f5f5f5;
-  text-align: center;
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ededed;
+  text-align: left;
 }
 
 html.dark .explanation-section {
   border-top-color: #333;
 }
 
-.explanation-toggle {
-  display: inline-block;
-  padding: 0;
-  background-color: transparent;
-  color: #888;
-  border: none;
-  border-radius: 0;
+.explanation-highlight {
+  padding: 1.25rem 1.375rem;
+  background-color: #f7f9fc;
+  border: 1px solid #e3e9f2;
+  border-radius: 10px;
+}
+
+html.dark .explanation-highlight {
+  background-color: #252a31;
+  border-color: #333a44;
+}
+
+.explanation-lead {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.6;
+  margin: 0 0 1rem;
+}
+
+html.dark .explanation-lead {
+  color: #f0f0f0;
+}
+
+.explanation-legend {
+  margin-bottom: 1.125rem;
+}
+
+.explanation-legend-bar {
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+html.dark .explanation-legend-bar {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.explanation-legend-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
   font-size: 0.8125rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: color 0.15s ease;
-  text-align: center;
-  width: auto;
+  color: #888;
 }
 
-html.dark .explanation-toggle {
-  color: #999;
+/* 強調色（白背景・暗背景とも読みやすい濃さに調整） */
+.legend-weak {
+  color: #d32f2f;
+  font-weight: 700;
 }
 
-.explanation-toggle:hover {
-  color: #555;
+.legend-resist {
+  color: #1a73e8;
+  font-weight: 700;
 }
 
-html.dark .explanation-toggle:hover {
-  color: #bbb;
+html.dark .legend-weak {
+  color: #ff8a80;
 }
 
-.explanation-content {
-  margin-top: 0.875rem;
-  padding: 0;
-  text-align: left;
+html.dark .legend-resist {
+  color: #8ab4f8;
+}
+
+.explanation-points {
+  font-size: 0.875rem;
+  color: #333;
+  line-height: 1.75;
+  padding-left: 1.25rem;
+  margin: 0 0 0.875rem;
+}
+
+html.dark .explanation-points {
+  color: #d6d6d6;
+}
+
+.explanation-points li + li {
+  margin-top: 0.375rem;
 }
 
 .explanation-text {
-  font-size: 0.8125rem;
-  color: #666;
-  line-height: 1.7;
-  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: #555;
+  line-height: 1.75;
+  margin: 0;
 }
 
 html.dark .explanation-text {
-  color: #aaa;
+  color: #b5b5b5;
 }
 
-.explanation-text:last-of-type {
+/* 数値の計算方法 */
+.score-guide {
+  margin-top: 1.75rem;
+}
+
+.score-guide-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem;
+}
+
+html.dark .score-guide-title {
+  color: #f0f0f0;
+}
+
+.score-guide-desc {
+  font-size: 0.875rem;
+  color: #555;
+  line-height: 1.75;
+  margin: 0 0 1.125rem;
+}
+
+html.dark .score-guide-desc {
+  color: #b5b5b5;
+}
+
+.score-guide-desc strong:not([class]) {
+  color: #1a1a1a;
+}
+
+html.dark .score-guide-desc strong:not([class]) {
+  color: #f0f0f0;
+}
+
+.score-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.score-table-caption {
+  caption-side: top;
+  text-align: left;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #888;
   margin-bottom: 0.5rem;
 }
 
-.explanation-list {
-  font-size: 0.8125rem;
-  color: #666;
-  line-height: 1.7;
-  padding-left: 1.125rem;
-  margin-top: 0.5rem;
+.score-table th {
+  padding: 0 0.75rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #888;
+  text-align: left;
+  border-bottom: 1px solid #e5e5e5;
 }
 
-html.dark .explanation-list {
+.score-table td {
+  padding: 0.5rem 0.75rem;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.score-table th:first-child,
+.score-table td:first-child {
+  padding-left: 0;
+  width: 4rem;
+}
+
+.score-table th:last-child,
+.score-table td:last-child {
+  padding-right: 0;
+  text-align: right;
+}
+
+.score-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+html.dark .score-table th {
+  color: #999;
+  border-bottom-color: #3a3a3a;
+}
+
+html.dark .score-table td {
+  color: #d6d6d6;
+  border-bottom-color: #2d2d2d;
+}
+
+/* 表のマスと同じ色のチップ */
+.score-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #1a1a1a;
+}
+
+.score-table th,
+.score-label,
+.score-damage {
+  white-space: nowrap;
+}
+
+.score-label {
+  font-weight: 600;
+}
+
+.score-damage {
+  font-variant-numeric: tabular-nums;
+  color: #666;
+}
+
+html.dark .score-damage {
   color: #aaa;
 }
 
-.explanation-list li {
-  margin-bottom: 0.375rem;
+.score-example {
+  margin-top: 1.25rem;
+  padding: 0.875rem 1rem;
+  background-color: #fafafa;
+  border-left: 3px solid #1a73e8;
+  border-radius: 0 8px 8px 0;
+}
+
+html.dark .score-example {
+  background-color: #252525;
+  border-left-color: #8ab4f8;
+}
+
+.score-example-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #1a73e8;
+  margin: 0 0 0.375rem;
+}
+
+html.dark .score-example-title {
+  color: #8ab4f8;
+}
+
+.score-example-body,
+.score-example-note {
+  font-size: 0.8125rem;
+  color: #555;
+  line-height: 1.7;
+  margin: 0;
+}
+
+html.dark .score-example-body,
+html.dark .score-example-note {
+  color: #b5b5b5;
+}
+
+.score-term {
+  white-space: nowrap;
+}
+
+.score-example-formula {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0.375rem 0;
+  font-variant-numeric: tabular-nums;
+}
+
+html.dark .score-example-formula {
+  color: #f0f0f0;
+}
+
+/* 表の見かた: スマートフォン向け（基本スタイルより後に置いて上書きする） */
+@media (max-width: 639px) {
+  .explanation-highlight {
+    padding: 1.125rem 1rem;
+  }
+
+  .explanation-text,
+  .explanation-points,
+  .score-guide-desc,
+  .score-example-body,
+  .score-example-note {
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  .explanation-lead {
+    font-size: 1.0625rem;
+  }
+
+  .explanation-legend-labels {
+    font-size: 0.875rem;
+  }
+
+  .score-guide-title,
+  .score-example-formula {
+    font-size: 1.0625rem;
+  }
+
+  .score-table {
+    font-size: 0.9375rem;
+  }
 }
 
 /* スマートフォン向けの最適化 */

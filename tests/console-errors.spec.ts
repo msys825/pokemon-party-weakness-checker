@@ -68,8 +68,8 @@ test('すべてのコンソールエラーを記録', async ({ page, baseURL }) 
     if (failure) {
       allFailedRequests.push({
         url: request.url(),
-        status: failure.statusCode || 0,
-        statusText: failure.statusText || 'Unknown',
+        status: 0,
+        statusText: failure.errorText || 'Unknown',
         timestamp: new Date().toISOString(),
       });
     }

@@ -47,18 +47,20 @@ test('コンソールエラーがないことを確認', async ({ page }) => {
     if (!url.includes('favicon') && failure) {
       failedRequests.push({
         url: url,
-        status: failure.statusCode || 0,
-        statusText: failure.statusText || 'Unknown',
+        status: 0,
+        statusText: failure.errorText || 'Unknown',
       });
-      
-      // 重要なエラー（500など）は記録
-      if (failure.statusCode && failure.statusCode >= 500) {
-        errors.push({
-          type: 'requestfailed',
-          message: `Failed request: ${url}`,
-          url: url,
-        });
-      }
+    }
+  });
+  
+  // 重要なエラー（500など）は記録（requestfailed では HTTP ステータスを取得できないため response で検出）
+  page.on('response', response => {
+    if (response.status() >= 500) {
+      errors.push({
+        type: 'requestfailed',
+        message: `Failed request: ${response.url()} (${response.status()})`,
+        url: response.url(),
+      });
     }
   });
   
@@ -117,7 +119,8 @@ test('CSSが正しく読み込まれていることを確認', async ({ page }) 
   });
   
   expect(containerStyle).not.toBeNull();
-  expect(containerStyle?.maxWidth).toBe('720px');
+  // 画面幅に応じて 720px / 1400px / 1600px に切り替わる
+  expect(containerStyle?.maxWidth).toMatch(/^(720|1400|1600)px$/);
 });
 
 /**
@@ -130,16 +133,16 @@ test('テーマ切り替えが正しく動作することを確認', async ({ pa
   const themeToggle = page.locator('.theme-toggle');
   await expect(themeToggle).toBeVisible();
   
-  // テーマトグルボタンをクリック
-  await themeToggle.click();
+  const html = page.locator('html');
+  const initialDark = await html.evaluate((el) => el.classList.contains('dark'));
   
-  // メニューが表示されることを確認
-  const themeMenu = page.locator('.theme-menu');
-  await expect(themeMenu).toBeVisible();
-  
-  // メニューを閉じる
+  // 1クリックでテーマが切り替わることを確認
   await themeToggle.click();
-  await expect(themeMenu).not.toBeVisible();
+  expect(await html.evaluate((el) => el.classList.contains('dark'))).toBe(!initialDark);
+  
+  // もう1クリックで元に戻ることを確認
+  await themeToggle.click();
+  expect(await html.evaluate((el) => el.classList.contains('dark'))).toBe(initialDark);
 });
 
 /**
