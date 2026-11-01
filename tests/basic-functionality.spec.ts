@@ -9,7 +9,7 @@ test.describe('基本的な機能の動作確認', () => {
     await page.goto('/');
     
     // タイトルが表示されているか
-    await expect(page.locator('h1.title')).toContainText('ポケモンパーティ弱点チェッカー');
+    await expect(page.locator('h1.title')).toContainText('ポケモン パーティ相性診断');
     
     // コンテナが存在するか
     await expect(page.locator('.container')).toBeVisible();
@@ -23,14 +23,15 @@ test.describe('基本的な機能の動作確認', () => {
       return window.getComputedStyle(document.body).backgroundColor;
     });
     
-    // 背景色が設定されているか（白または黒）
-    expect(bodyBg).toMatch(/rgb\(250, 250, 250\)|rgb\(26, 26, 26\)/);
+    // 背景色が設定されているか（ライト: #ffffff / ダーク: #1a1a1a）
+    expect(bodyBg).toMatch(/rgb\(255, 255, 255\)|rgb\(26, 26, 26\)/);
     
     // コンテナのスタイルを確認
     const containerStyle = await page.locator('.container').evaluate((el) => {
       return window.getComputedStyle(el).maxWidth;
     });
-    expect(containerStyle).toBe('720px');
+    // 画面幅に応じて 720px / 1400px / 1600px に切り替わる
+    expect(containerStyle).toMatch(/^(720|1400|1600)px$/);
   });
 
   test('追加ボタンがクリックできる', async ({ page }) => {
@@ -63,19 +64,20 @@ test.describe('基本的な機能の動作確認', () => {
   test('テーマトグルボタンがクリックできる', async ({ page }) => {
     await page.goto('/');
     
-    // テーマトグルボタンをクリック
+    const isDark = () => page.locator('html').evaluate((el) => el.classList.contains('dark'));
+    const initialDark = await isDark();
+    
+    // 1クリックでテーマが切り替わる
     await page.locator('.theme-toggle').click();
+    expect(await isDark()).toBe(!initialDark);
     
-    // メニューが表示されるか確認
-    await expect(page.locator('.theme-menu')).toBeVisible();
+    // 再読み込みしても選択が維持される
+    await page.reload();
+    expect(await isDark()).toBe(!initialDark);
     
-    // メニューを閉じる
+    // もう1クリックで元に戻る
     await page.locator('.theme-toggle').click();
-    await page.waitForTimeout(100);
-    
-    // メニューが非表示になったか確認
-    const menuVisible = await page.locator('.theme-menu').isVisible().catch(() => false);
-    expect(menuVisible).toBe(false);
+    expect(await isDark()).toBe(initialDark);
   });
 
   test('タイプ選択が動作する', async ({ page }) => {
@@ -91,29 +93,22 @@ test.describe('基本的な機能の動作確認', () => {
     await expect(type1Select).toHaveValue('ほのお');
   });
 
-  test('弱点計算についてボタンがクリックできる', async ({ page }) => {
+  test('表の見かたが常に表示されている', async ({ page }) => {
     await page.goto('/');
     
-    // 説明セクションが存在するか確認
-    const explanationToggle = page.locator('.explanation-toggle');
-    await expect(explanationToggle).toBeVisible();
+    // 折りたたまずに最初から表示されているか確認
+    await expect(page.locator('.explanation-highlight')).toBeVisible();
+    await expect(page.locator('.score-guide')).toBeVisible();
     
-    // クリックして説明を表示
-    await explanationToggle.click();
-    
-    // 説明が表示されたか確認
-    await expect(page.locator('.explanation-content')).toBeVisible();
-    
-    // 再度クリックして説明を非表示
-    await explanationToggle.click();
-    await page.waitForTimeout(100);
+    // スコア表に6段階すべてが表示されているか確認
+    await expect(page.locator('.score-table tbody tr')).toHaveCount(6);
   });
 
   test('弱点表が表示される', async ({ page }) => {
     await page.goto('/');
     
     // 弱点表のタイトルが表示されているか
-    await expect(page.locator('.weakness-table-title')).toContainText('パーティの弱点一覧');
+    await expect(page.locator('.weakness-table-title')).toContainText('タイプ耐性一覧');
     
     // 弱点セルが存在するか（18タイプ分）
     const cells = await page.locator('.weakness-cell').count();

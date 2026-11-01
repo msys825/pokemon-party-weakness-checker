@@ -33,11 +33,11 @@ export default function TestPage() {
     
     // 背景色の確認
     const bodyBg = window.getComputedStyle(document.body).backgroundColor;
-    const expectedBg = theme === 'dark' ? 'rgb(26, 26, 26)' : 'rgb(250, 250, 250)';
+    const expectedBg = theme === 'dark' ? 'rgb(26, 26, 26)' : 'rgb(255, 255, 255)';
     const bodyBgRgb = bodyBg.match(/\d+/g)?.slice(0, 3).join(', ');
     results.push({
       name: '背景色の適用',
-      status: bodyBg.includes('26, 26, 26') || bodyBg.includes('250, 250, 250') ? 'pass' : 'fail',
+      status: bodyBg.includes('26, 26, 26') || bodyBg.includes('255, 255, 255') ? 'pass' : 'fail',
       message: `期待: ${expectedBg}, 実際: rgb(${bodyBgRgb})`,
     });
 
@@ -87,17 +87,17 @@ export default function TestPage() {
     // テーマトグルボタンのクリック
     const themeToggle = document.querySelector('.theme-toggle') as HTMLButtonElement;
     if (themeToggle) {
-      const initialTheme = theme;
+      const initialDark = document.documentElement.classList.contains('dark');
       themeToggle.click();
       await new Promise(resolve => setTimeout(resolve, 100));
-      const menuVisible = document.querySelector('.theme-menu') !== null;
+      const toggled = document.documentElement.classList.contains('dark') !== initialDark;
       results.push({
         name: 'テーマトグルボタンのクリック',
-        status: menuVisible ? 'pass' : 'fail',
-        message: menuVisible ? 'メニューが表示されました' : 'メニューが表示されませんでした',
+        status: toggled ? 'pass' : 'fail',
+        message: toggled ? 'テーマが切り替わりました' : 'テーマが切り替わりませんでした',
       });
-      // メニューを閉じる
-      if (menuVisible) {
+      // 元のテーマに戻す
+      if (toggled) {
         themeToggle.click();
         await new Promise(resolve => setTimeout(resolve, 100));
       }
@@ -149,24 +149,15 @@ export default function TestPage() {
       });
     }
 
-    // 弱点計算についてボタンのクリック
-    const explanationToggle = document.querySelector('.explanation-toggle') as HTMLButtonElement;
-    if (explanationToggle) {
-      explanationToggle.click();
-      await new Promise(resolve => setTimeout(resolve, 100));
-      const explanationVisible = document.querySelector('.explanation-content') !== null;
-      results.push({
-        name: '弱点計算についてボタンのクリック',
-        status: explanationVisible ? 'pass' : 'fail',
-        message: explanationVisible ? '説明が表示されました' : '説明が表示されませんでした',
-      });
-    } else {
-      results.push({
-        name: '弱点計算についてボタンのクリック',
-        status: 'fail',
-        message: '弱点計算についてボタンが見つかりません',
-      });
-    }
+    // 表の見かたが常に表示されているか
+    const explanationVisible =
+      document.querySelector('.explanation-highlight') !== null &&
+      document.querySelector('.score-guide') !== null;
+    results.push({
+      name: '表の見かたの表示',
+      status: explanationVisible ? 'pass' : 'fail',
+      message: explanationVisible ? '説明が表示されています' : '説明が表示されていません',
+    });
 
     return results;
   };

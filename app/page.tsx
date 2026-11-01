@@ -90,7 +90,19 @@ export default function Home() {
     <main className="container" ref={containerRef}>
       <header className="header">
         <div className="header-content">
-          <h1 className="title">ポケモンパーティ耐性チェッカー</h1>
+          <div className="title-block">
+            <h1 className="title">
+              <span className="title-kicker">ポケモン</span>{' '}
+              <span className="title-main">パーティ相性診断</span>
+            </h1>
+            <p className="tagline">
+              <span className="tagline-phrase">色でわかる、</span>
+              <span className="tagline-phrase">
+                パーティの<span className="tagline-weak">弱点</span>と
+                <span className="tagline-resist">耐性</span>バランス
+              </span>
+            </p>
+          </div>
           <ThemeSelector />
         </div>
       </header>

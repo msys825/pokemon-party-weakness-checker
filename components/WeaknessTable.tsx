@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { PokemonType } from '@/lib/types';
 import { POKEMON_TYPES } from '@/lib/pokemonTypes';
 import { WeaknessResult } from '@/lib/calculator';
@@ -40,14 +39,24 @@ function getColorForValue(value: number): string {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
+const LEGEND_GRADIENT = `linear-gradient(to right, rgb(${COLORS.RED.r}, ${COLORS.RED.g}, ${COLORS.RED.b}), rgb(${COLORS.WHITE.r}, ${COLORS.WHITE.g}, ${COLORS.WHITE.b}), rgb(${COLORS.BLUE.r}, ${COLORS.BLUE.g}, ${COLORS.BLUE.b}))`;
+
+// 1匹あたりの相性スコア（lib/calculator.ts の effectivenessToScore と対応）
+const SCORE_GUIDE = [
+  { score: 4, label: '効果なし', damage: '0倍' },
+  { score: 3, label: 'いまひとつ（重複）', damage: '1/4倍' },
+  { score: 2, label: 'いまひとつ', damage: '1/2倍' },
+  { score: 0, label: '通常', damage: '1倍' },
+  { score: -2, label: '効果ばつぐん', damage: '2倍' },
+  { score: -4, label: '効果ばつぐん（重複）', damage: '4倍' },
+] as const;
+
 function formatValue(value: number): string {
   const rounded = Math.round(value * 100) / 100;
   return rounded.toFixed(2).replace(/\.?0+$/, '');
 }
 
 export default function WeaknessTable({ weaknesses }: WeaknessTableProps) {
-  const [showExplanation, setShowExplanation] = useState(false);
-
   return (
     <div className="weakness-table-container">
       <h2 className="weakness-table-title">タイプ耐性一覧</h2>
@@ -89,39 +98,87 @@ export default function WeaknessTable({ weaknesses }: WeaknessTableProps) {
           );
         })}
       </div>
-      <div className="explanation-section">
-        <button
-          onClick={() => setShowExplanation(!showExplanation)}
-          className="explanation-toggle"
-          type="button"
-        >
-          耐性計算について
-        </button>
-        {showExplanation && (
-          <div className="explanation-content">
-            <p className="explanation-text">
-              各タイプの攻撃に対してパーティ全体がどれだけ耐性があるか（または弱点があるか）を数値で表示しています。
+      <section className="explanation-section" aria-label="表の見かた">
+        <div className="explanation-highlight">
+          <h3 className="explanation-lead">色を見るだけで、パーティの守りの強さがひと目でわかります</h3>
+          <div className="explanation-legend" aria-hidden="true">
+            <div className="explanation-legend-bar" style={{ background: LEGEND_GRADIENT }} />
+            <div className="explanation-legend-labels">
+              <span className="legend-weak">← 弱点が多い</span>
+              <span>通常</span>
+              <span className="legend-resist">耐性が高い →</span>
+            </div>
+          </div>
+          <ul className="explanation-points">
+            <li>
+              表全体が<strong className="legend-resist">青い</strong>ほど、多くのタイプの攻撃に強い、耐性の高いパーティです。
+            </li>
+            <li>
+              <strong className="legend-weak">赤い</strong>マスが多いほど、弱点を突かれやすいパーティです。色が濃いほど、そのタイプへの弱点が集中しています。
+            </li>
+          </ul>
+          <p className="explanation-text">
+            赤いマスを減らし、青いマスを増やすようにメンバーを入れ替えれば、お互いの弱点を補い合うバランスの良いパーティを組めます。迷ったときは「提案」ボタンで、弱点を補うタイプを探してみてください。
+          </p>
+        </div>
+
+        <div className="score-guide">
+          <h3 className="score-guide-title">数値の計算方法</h3>
+          <p className="score-guide-desc">
+            各マスの数値は、そのタイプの攻撃を受けたときの相性スコアを、パーティ全員分<strong>合計</strong>したものです。
+            <strong className="legend-resist">プラス（青）</strong>は耐性、
+            <strong className="legend-weak">マイナス（赤）</strong>は弱点を表します。
+          </p>
+
+          <table className="score-table">
+            <caption className="score-table-caption">1匹あたりの相性スコア</caption>
+            <thead>
+              <tr>
+                <th scope="col">スコア</th>
+                <th scope="col">相性</th>
+                <th scope="col">ダメージ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SCORE_GUIDE.map(({ score, label, damage }) => (
+                <tr key={score}>
+                  <td>
+                    <span
+                      className="score-chip"
+                      style={{ backgroundColor: getColorForValue(score) }}
+                    >
+                      {score > 0 ? `+${score}` : score}
+                    </span>
+                  </td>
+                  <td className="score-label">{label}</td>
+                  <td className="score-damage">{damage}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="score-example">
+            <p className="score-example-title">計算例</p>
+            <p className="score-example-body">
+              ほのおタイプとみずタイプの2匹で、<strong>くさ</strong>タイプの攻撃を受ける場合
             </p>
-            <p className="explanation-text">
-              計算方法：パーティ内の全ての相性のスコアを合計して表示しています。
+            <p className="score-example-formula">
+              <span className="score-term">
+                ほのお <span className="legend-resist">+2</span>（いまひとつ）
+              </span>{' '}
+              <span className="score-term">
+                ＋ みず <span className="legend-weak">-2</span>（効果ばつぐん）
+              </span>{' '}
+              <span className="score-term">
+                ＝ <strong>0</strong>
+              </span>
             </p>
-            <p className="explanation-text">
-              耐性の値について：
-            </p>
-            <ul className="explanation-list">
-              <li>4 = 効果なし（ダメージを受けない）</li>
-              <li>3 = 1/4（ダメージが1/4倍）</li>
-              <li>2 = いまひとつ（ダメージが半分）</li>
-              <li>0 = 通常（普通のダメージ）</li>
-              <li>-2 = 効果ばつぐん（ダメージが2倍）</li>
-              <li>-4 = 4倍（ダメージが4倍）</li>
-            </ul>
-            <p className="explanation-text">
-              表示について：正の値（青）は耐性を、負の値（赤）は弱点を表します。
+            <p className="score-example-note">
+              片方の弱点をもう片方の耐性が打ち消し、プラスマイナス0になります。
             </p>
           </div>
-        )}
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

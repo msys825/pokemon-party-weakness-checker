@@ -94,12 +94,8 @@ test.describe('Hydrationエラーの検出', () => {
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
     
-    // テーマトグルボタンをクリック
+    // テーマトグルボタンをクリックしてテーマを切り替え
     await page.locator('.theme-toggle').click();
-    await page.waitForTimeout(500);
-    
-    // ダークテーマを選択
-    await page.locator('.theme-menu-item:has-text("ダークテーマ")').click();
     await page.waitForTimeout(1000);
     
     // Hydrationエラーが発生していないことを確認

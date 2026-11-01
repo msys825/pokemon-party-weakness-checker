@@ -12,7 +12,7 @@ test('タイトルが中央寄せになっていることを確認', async ({ pa
   
   // タイトルのテキストを確認
   const titleText = await title.textContent();
-  expect(titleText).toBe('ポケモンパーティ耐性チェッカー');
+  expect(titleText).toBe('ポケモン パーティ相性診断');
   
   // タイトルのスタイルを確認
   const titleStyle = await page.evaluate(() => {
